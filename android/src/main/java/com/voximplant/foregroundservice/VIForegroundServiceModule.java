@@ -132,8 +132,6 @@ public class VIForegroundServiceModule extends ReactContextBaseJavaModule {
     }
 
     public void buttonPressedEvent(Context context) {
-        Intent it = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-        context.sendBroadcast(it);
         WritableMap params = Arguments.createMap();
         params.putString("event", FOREGROUND_SERVICE_BUTTON_PRESSED);
         sendEvent("VIForegroundServiceButtonPressed", params);
