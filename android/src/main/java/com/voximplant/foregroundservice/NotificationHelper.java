@@ -129,7 +129,6 @@ class NotificationHelper {
         String iconName = notificationConfig.getString("icon");
         if (iconName != null) {
             notificationBuilder.setSmallIcon(getResourceIdForResourceName(context, iconName));
-            notificationBuilder.setLargeIcon(getResourceIdForResourceName(context, "ic_launcher"))
         }
 
         if (notificationConfig.containsKey("button")) {
