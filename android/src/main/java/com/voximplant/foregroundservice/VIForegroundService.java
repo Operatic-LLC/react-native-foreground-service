@@ -9,9 +9,9 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 
 import static com.voximplant.foregroundservice.Constants.NOTIFICATION_CONFIG;
-
 public class VIForegroundService extends Service {
 
     @Override
@@ -29,15 +29,25 @@ public class VIForegroundService extends Service {
                     if (notificationConfig != null && notificationConfig.containsKey("id")) {
                         Notification notification = NotificationHelper.getInstance(getApplicationContext())
                                 .buildNotification(getApplicationContext(), notificationConfig);
-
-                        startForeground((int)notificationConfig.getDouble("id"), notification);
+                        Log.d("VIForegroundService", "FOREGROUND SERVICE: starting notification");
+                        startForeground((int)notificationConfig.getDouble("id"),
+                                notification);
+                        Log.d("VIForegroundService", "FOREGROUND SERVICE: notification started");
+                    } else {
+                        Log.w("VIForegroundService", "FOREGROUND SERVICE: NO NOTIFICATION ID PROVIDED");
                     }
+                } else {
+                    Log.w("VIForegroundService", "FOREGROUND SERVICE: NO NOTIFICATION CONFIGURATION PROVIDED");
                 }
             } else if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_STOP)) {
                 stopSelf();
             }
+        } else {
+            Log.w("VIForegroundService", "FOREGROUND SERVICE: Action is null");
         }
         return START_NOT_STICKY;
 
     }
+
+
 }

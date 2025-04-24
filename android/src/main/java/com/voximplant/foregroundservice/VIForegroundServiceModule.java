@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
+import androidx.core.content.ContextCompat;
 import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.Arguments;
@@ -25,7 +26,7 @@ import static com.voximplant.foregroundservice.Constants.ERROR_INVALID_CONFIG;
 import static com.voximplant.foregroundservice.Constants.ERROR_SERVICE_ERROR;
 import static com.voximplant.foregroundservice.Constants.NOTIFICATION_CONFIG;
 import static com.voximplant.foregroundservice.Constants.FOREGROUND_SERVICE_BUTTON_PRESSED;
-
+import android.util.Log;
 
 
 public class VIForegroundServiceModule extends ReactContextBaseJavaModule {
@@ -106,17 +107,16 @@ public class VIForegroundServiceModule extends ReactContextBaseJavaModule {
         Intent intent = new Intent(getReactApplicationContext(), VIForegroundService.class);
         intent.setAction(Constants.ACTION_FOREGROUND_SERVICE_START);
         intent.putExtra(NOTIFICATION_CONFIG, Arguments.toBundle(notificationConfig));
-        ComponentName componentName = getReactApplicationContext().startService(intent);
+        ContextCompat.startForegroundService(getReactApplicationContext(), intent);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(FOREGROUND_SERVICE_BUTTON_PRESSED);
-        getReactApplicationContext().registerReceiver(foregroundReceiver, filter);
-
-        if (componentName != null) {
-            promise.resolve(null);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            getReactApplicationContext().registerReceiver(foregroundReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
         } else {
-            promise.reject(ERROR_SERVICE_ERROR, "VIForegroundService: Foreground service is not started");
+            getReactApplicationContext().registerReceiver(foregroundReceiver, filter);
         }
+        promise.resolve(null);
     }
 
     @ReactMethod
